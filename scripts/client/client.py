@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import sys
 import socket
+import os
 import items import ItemsDB
+from pexpect import spawn, TIMEOUT, EOF
 
-OVPN_MGMT_HOST = "127.0.0.1"
-OVPN_MGMT_PORT = "11528"
-LISTFILE = "/opt/scripts/client/blocklist"
+OVPN_MGMT_HOST = os.getenv("OVPN_MGMT_HOST", "127.0.0.1")
+OVPN_MGMT_PORT = os.getenv("OVPN_MGMT_PORT", "11528")
+LISTFILE = os.getenv("OVPN_BLOCKLIST", "/opt/scripts/client/blocklist")
 
 
 class Client:
@@ -20,11 +22,25 @@ class Client:
         else:
             raise ValueError("CN is not a string!")
 
+    def kill_client(cn):
+        cmd = f"telnet {host} {port}"
+        with spawn(cmd, timeout=timeout) as p:
+            try:
+                p.expect(">INFO:OpenVPN Management Interface Version 1 -- type 'help' for more info", timeout=5)
+                p.sendline(f"kill {cn}")
+                # p.before contains bytes/text received before the prompt
+                out = p.before.decode(errors="replace") if isinstance(p.before, bytes) else p.before
+                return out
+            except (TIMEOUT, EOF) as exc:
+                # partial output is in p.before/p.after
+                partial = p.before.decode(errors="replace") if isinstance(p.before, bytes) else p.before
+                raise RuntimeError("interaction failed", exc, partial)
+
     def block(self) -> bool:
         print(f"Blocking client with CN {self.cn}")
         try:
             with socket.create_connection(telnet_creds, timeout=5) as s:
-                s.sendall((f"kill {self.cn}" + "\r\n").encode())
+                s.sendall((f"kill {self.cn}\r\n").encode())
 
             print(f"Command to kill client {self.cn} sent")
         except Exception as e:

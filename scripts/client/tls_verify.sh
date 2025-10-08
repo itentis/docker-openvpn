@@ -1,7 +1,8 @@
 #!/bin/bash
+# may redo in Python later
 
-LOGFILE="${OVPN_TLS_LOGFILE:-/etc/openvpn/tls_verify.log}"
-BLOCKLIST="${OVPN_TLS_BLOCKLIST:-/etc/openvpn/blocklist}"
+LOGFILE="${OVPN_TLS_LOGFILE:-/opt/scripts/client/tls_verify.log}"
+BLOCKLIST="${OVPN_TLS_BLOCKLIST:-/opt/scripts/client/blocklist}"
 
 if [ "$1" = "0" ]; then
    CLIENT=$(echo "$2" | cut -c 4-)

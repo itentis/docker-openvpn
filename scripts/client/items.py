@@ -5,6 +5,11 @@ import os
 import tempfile
 from typing import List, Iterable
 
+"""
+Somewhat crude API to use a regular list-like file as a database.
+Safe writes, safe reads and idempotency.
+"""
+
 
 class ItemsDB:
     def __init__(self, path: str):
