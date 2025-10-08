@@ -29,3 +29,6 @@ RUN chmod a+x /usr/local/bin/*
 
 # Add support for OTP authentication using a PAM module
 ADD ./otp/openvpn /etc/pam.d/
+
+ADD ./scripts /opt/scripts
+RUN chmod -R a+x /opt/scripts/*
