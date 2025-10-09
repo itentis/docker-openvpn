@@ -81,6 +81,7 @@ class ItemsDB:
         return True
 
     def replace_all(self, items: Iterable[str]) -> None:
+        # we won't be needing it, but still
         dirpath = os.path.dirname(self.path) or "."
         fd, tmp_path = tempfile.mkstemp(prefix=".tmp.", dir=dirpath)
         try:

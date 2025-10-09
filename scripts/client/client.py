@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# client.py
 import sys
 import socket
 import os
@@ -10,7 +11,7 @@ OVPN_MGMT_PORT = os.getenv("OVPN_MGMT_PORT", "11528")
 LISTFILE = os.getenv("OVPN_BLOCKLIST", "/tmp/scripts/client/blocklist")
 
 
-class Client:
+class OpenVPNClient:
     telnet_creds = OVPN_MGMT_HOST, OVPN_MGMT_PORT
     db = ItemsDB(LISTFILE)
 
@@ -23,13 +24,13 @@ class Client:
             raise ValueError("CN is not a string!")
 
     def kill_client(self, cn: str) -> str | None:
-        cmd = f"telnet {' '.join(Client.telnet_creds)}"
+        cmd = f"telnet {' '.join(OpenVPNClient.telnet_creds)}"
         print("  Connecting through " + cmd)
         with spawn(cmd, timeout=5) as p:
             try:
                 print(f"  Trying to kill the client {cn}")
                 p.expect(
-                    ">INFO:OpenVPN Management Interface Version 1 -- type 'help' for more info",
+                    ">INFO:OpenVPN Management",
                     timeout=5,
                 )
                 p.sendline(f"kill {cn}")
@@ -63,7 +64,7 @@ class Client:
             print(e)
             return False
         try:
-            Client.db.add(self.cn)  # idempotent!
+            OpenVPNClient.db.add(self.cn)  # idempotent!
             print(f"  Client {self.cn} blocked.")
             return True
         except Exception as e:
@@ -78,7 +79,7 @@ class Client:
     def unblock(self) -> bool:
         print(f"Unblocking client with CN {self.cn}: ")
         try:
-            if Client.db.remove(self.cn):  # idempotent!
+            if OpenVPNClient.db.remove(self.cn):  # idempotent!
                 print(f"  Client {self.cn} unblocked and may connect.")
                 return True
             else:

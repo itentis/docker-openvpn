@@ -1,12 +1,6 @@
 user nobody
 group nogroup
 
-# NEEDED FOR BLOCKER
-management 127.0.0.1 11528 # needs to match .env
-script-security 2 # otherwise script won't run
-tls-verify /opt/openvpn/etc/tls_verify.sh
-# NEEDED FOR BLOCKER
-
 # KEY STUFF
 key /etc/openvpn/pki/private/ovpn-test.fasti.win.key
 ca /etc/openvpn/pki/ca.crt
@@ -43,3 +37,9 @@ status /etc/openvpn/log/status.log 60
 status-version 2
 log /etc/openvpn/log/openvpn.log
 log-append /etc/openvpn/log/openvpn.log
+
+# NEEDED FOR BLOCKER
+management 127.0.0.1 11528 # needs to match .env
+script-security 2 # otherwise script won't run
+tls-verify /opt/openvpn/etc/tls_verify.sh
+# NEEDED FOR BLOCKER
