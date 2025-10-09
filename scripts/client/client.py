@@ -150,7 +150,7 @@ class WireguardClient:
 
     def unblock(self, old_ip: str) -> bool:
         """
-        usage: client.WireguardClient("6cCLfSYbyPcRODrH3yNuxiaqNZ212345YpzB6LAb3nM=", "10.64.1.7").unblock()
+        usage: client.WireguardClient("6cCLfSYbyPcRODrH3yNuxiaqNZ212345YpzB6LAb3nM=").unblock("10.64.1.7")
         """
         log.warning("Unblocking client %s", self.pubkey)
         return self._change_ip(old_ip)
